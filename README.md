@@ -19,7 +19,7 @@ The registrar contract and individual names on each node can be "frozen". This a
 Examples
 ----
 
-The `/f/` namespace is controlled by a simple *f*ree, *f*irst-come-*f*irst-serve, *f*ozen, *f*ree-for-all registrar.
+The `/f/` namespace is controlled by a simple *f*ree, *f*irst-come-*f*irst-serve, *f*rozen, *f*ree-for-all registrar.
 
 
 
