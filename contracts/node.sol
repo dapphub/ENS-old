@@ -2,7 +2,9 @@ import 'dappsys/data/direct_map.sol';
 
 contract ENSNode is DSDirectMap
 {
-    function get(bytes32 key) constant returns (bytes32 value) {
+    function get(bytes32 key) constant
+             returns (bytes32 value)
+    {
         return _ds_get( key );
     }
     function set(bytes32 key, bytes32 value)

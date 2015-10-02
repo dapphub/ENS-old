@@ -16,19 +16,13 @@ have to follow. This allows different namespaces to have different name registra
 The registrar contract and individual names on each node can be "frozen". This allows fully autonomous registries (for example, to create provably immutable maps) even as subsystems of user-controlled namespaces.
 
 
+Getting started:
+
 Examples
 ----
 
 The `/f/` namespace is controlled by a simple *f*ree, *f*irst-come-*f*irst-serve, *f*rozen, *f*ree-for-all registrar.
 
-
-
-
-
-
-
-
-var e = NameRegNode(0xSystemAddress); // permanent root
 
 
 var free_for_all = e.get('/free');  // free first-come first-serve registrar
@@ -45,6 +39,10 @@ e://free/nikolai/
 
 
 bytes32 ipfs_homepage = ENS( '/free/nikolai/ipfs' );
+
+
+
+
 
 
 extra

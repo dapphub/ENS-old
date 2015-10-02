@@ -1,14 +1,13 @@
 contract ENSAppInterface {
     function set( ENSNode node, bytes32 key, bytes32 value );
     function set_dir( ENSNode node, bytes32 key, ENSNode subnode );
-    function get( ENSNode node, bytes32 key) constant returns (bytes32 value);
-
-    function transfer( ENSNode node, bytes32 key, address new_owner );
 
     function new_node() returns (ENSNode);
+    function transfer( ENSNode node, bytes32 key, address new_owner );
     function set_controller( ENSNode node, ENSNodeControllerInterface controller );
 
     // Resolver
+    function get( ENSNode node, bytes32 key) constant returns (bytes32 value);
     function resolve(bytes query) constant returns (bytes32 value);
     function resolve_relative(ENSNode root, bytes query) constant returns (bytes32 value);
 
@@ -20,24 +19,21 @@ contract ENSAppInterface {
 contract ENSApp is ENSAppInterface
                  , Resolver
 {
-    mapping( address => bool ) public _known_node;
-    bool[2**128] public _is_node; // quick lookup for resolvers
-    struct node_config {
-        address owner;
-        bool frozen;
-        ENSodeControllerInterface controller;
-    }
     struct entry {
         bool registered;
-        address owner;
-        bytes32 value;
-        bool frozen;
         bool is_node;
+        address owner;
+        ENSNodeControllerInterface controller;
+        bool frozen;
     }
+
+
+    bool[2**128] public               _is_node; // quick lookup for resolvers
+    ENSNode                           _root;
+
+    mapping( ENSNode => mapping( bytes32 => entry ) ) entries;
     node_config public config;
 
-    ENSNode _root;
-    mapping( address => bool )     _is_node;
     function ENSApp() {
         _root = new_node();
     }
