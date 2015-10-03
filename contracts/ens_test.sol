@@ -4,11 +4,11 @@ import 'dappsys/test/test.sol';
 contract ENSTest is Test {
     
     ENSApp ens;
+    FreeForAllControllaer f;
     function setUp() {
         ens = new ENSApp();
-        var free_node = app.new_node();
-        ens.set("/free", free_node);
-
+        ens.set("/f", f);
+        ens.fix("/f");
         var dir = ens.dir("/free/nikolai");
         
     }

@@ -17,15 +17,34 @@ individual directories are configured with controllers.
 ENSApp
 ---
 
+enum ens_type_id {
+    error,
+    value,
+    node
+}
+
 User functions:
 
-`resolve( string query ) returns ( bytes32 value, bool is_node )`
+get :: string -> bytes32, byte
+set :: string -> bytes32 -> ens_type_id
 
+`resolve( string query ) returns ( bytes32 value, bool is_dir )`
+
+`set( string path, bytes32 value)`
+`set_dir( string path, ENSNode dir)`
 `set( ENSNode node, bytes32 key, bytes32 value )`
 `set_dir( ENSNode node, bytes32 key, ENSNode dir )`
+`set_controller( ENSNode node, ENSNodeController controller )`
 
-`get( ENSNode node, bytes32 key) returns (bytes32 value, bool is_node)`
+`get( ENSNode node, bytes32 key) returns (bytes32 value, bool is_dir)`
+`get_dir( string query ) returns (ENSNode node)`
+`get_dir( ENSNode node, bytes32 key) returns (ENSNode subdir)`
 `resolve_relative( ENSNode node, bytes32 key) returns (bytes32 value, bool is_node)`
+
+`freeze_key( ENSNode node, bytes32 key)`
+`freeze_controller( ENSNode node )`
+
+`new_dir() returns (ENSNode dir)`
 
 Node callbacks:
 

@@ -1,6 +1,9 @@
+import 'ens/resolver.sol';
+
 contract ENSAppInterface {
     function set( ENSNode node, bytes32 key, bytes32 value );
     function set_dir( ENSNode node, bytes32 key, ENSNode subnode );
+    // promote??
 
     function new_node() returns (ENSNode);
     function transfer( ENSNode node, bytes32 key, address new_owner );
