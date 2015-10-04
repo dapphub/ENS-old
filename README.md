@@ -2,6 +2,8 @@ ENS
 ===
 excellent namespace solution
 
+This is the dapple package repo. ENS docs live in docs/ens.
+
 
 The system consists of a tree of nodes which each contain a key-value store. Nodes are built using a 
 factory contract built into the system and all have the same structure. Users traverse
