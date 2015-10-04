@@ -1,8 +1,7 @@
-Ether Name System
+ENS
 ===
+excellent namespace solution
 
-
-ENS is the ultimate namereg contract.
 
 The system consists of a tree of nodes which each contain a key-value store. Nodes are built using a 
 factory contract built into the system and all have the same structure. Users traverse

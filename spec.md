@@ -1,10 +1,5 @@
-ENS
-===
 
-
-universal name system.
-
-the app maps strings to bytes32 values. The app also maintains a record of which
+This app maps *ens query strings* to bytes32 values. The app also maintains a record of which
 values represent subnodes as opposed to raw values.
 
 It is like a basic file naming scheme that distinguishes between file objects and directory objects.
@@ -19,26 +14,26 @@ ENSApp
 
 User functions:
 
-get :: string -> bytes32, byte
-set :: string -> bytes32 -> ens_type_id
+```
+    query :: key -> value, ok
+    store :: key, value -> ok
 
-`resolve( string query ) returns ( bytes32 value, bool success )`
+    get :: node, key -> value, ok
+    set :: node, key, value -> ok
+    freeze :: node, key -> ok
 
-`set( string path, bytes32 value)`
-`set_dir( string path, ENSNode dir)`
-`set( ENSNode node, bytes32 key, bytes32 value )`
-`set_dir( ENSNode node, bytes32 key, ENSNode dir )`
-`set_controller( ENSNode node, ENSNodeController controller )`
+    register :: -> ok
+```
 
-`get( ENSNode node, bytes32 key) returns (bytes32 value, bool is_dir)`
-`get_dir( string query ) returns (ENSNode node)`
-`get_dir( ENSNode node, bytes32 key) returns (ENSNode subdir)`
-`resolve_relative( ENSNode node, bytes32 key) returns (bytes32 value, bool is_node)`
 
-`freeze_key( ENSNode node, bytes32 key)`
-`freeze_controller( ENSNode node )`
+`query( string query_string ) returns ( bytes32 value, bool ok )`
+`store( string path_string, bytes32 value ) returns (bool ok)`
 
-`new_dir() returns (ENSNode dir)`
+`set( address node, bytes32 key, bytes32 value ) returns (bool ok)`
+`get( address node, bytes32 key ) returns (bytes32 value, bool ok)`
+`freeze( address node, bytes32 key) returns (bool ok)`
+
+`register() returns (bool)`
 
 Node callbacks:
 
