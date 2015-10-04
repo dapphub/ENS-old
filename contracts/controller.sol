@@ -4,18 +4,18 @@ contract ENSNodeControllerInterface {
     // @dev Called once by the ENS core contract.
     function ens_controller_init( uint node_id ) returns (bool);
     function ens_set( address caller, bytes key, bytes32 value ) returns (bool);
-    function ens_get( bytes key ) returns (bytes32 value, byte flags);
+    function ens_get_request( bytes key );
     function ens_can_freeze( address caller, bytes key ) returns (bool);
 }
 
 // TODO replace mock with proper mixin by removing init_usermock and using CONSTANT macro
-contract ENSControllerUserMock is Debug {
+contract ENSAppUserMock is Debug {
     address _ens;
     function init_usermock( ENS app ) {
         _ens = address(app);
     }
-    function ens() internal returns (ENSInterface) {
-        return ENSInterface(_ens);
+    function ens() internal returns (ENS) {
+        return ENS(_ens);
     }
 
     modifier ens_only() {
@@ -27,13 +27,13 @@ contract ENSControllerUserMock is Debug {
     }
 }
 contract ENS_Controller_CuratedNamereg is ENSNodeControllerInterface
-                                        , ENSControllerUserMock
+                                        , ENSAppUserMock
 {
     uint node;
     address public owner;
     // TODO remove app from constructor
     function ENS_Controller_CuratedNamereg()
-             ENSControllerUserMock()
+             ENSAppUserMock()
     {
         owner = msg.sender;
     }
@@ -56,7 +56,7 @@ contract ENS_Controller_CuratedNamereg is ENSNodeControllerInterface
         }
         return false;
     }
-    function can_freeze( address caller, bytes key )
+    function ens_can_freeze( address caller, bytes key )
              ens_only()
              returns (bool)
     {
@@ -65,9 +65,8 @@ contract ENS_Controller_CuratedNamereg is ENSNodeControllerInterface
         }
         return false;
     }
-    function ens_get(bytes key) returns (bytes32 value, byte flags) {
+    function ens_get_request(bytes key) {
         //logs("in controller get");
-        value = values[key];
-        flags = 0x0;
+        ens().get_callback(values[key]);
     }
 }

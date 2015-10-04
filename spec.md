@@ -17,12 +17,6 @@ individual directories are configured with controllers.
 ENSApp
 ---
 
-enum ens_type_id {
-    error,
-    value,
-    node
-}
-
 User functions:
 
 get :: string -> bytes32, byte

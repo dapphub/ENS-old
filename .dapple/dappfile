@@ -7,5 +7,6 @@ ignore:
     - app.sol
     - node.sol
     - single_contract.sol
+    - check_depth.sol
 dependencies:
     core: 'latest'
