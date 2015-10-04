@@ -1,26 +1,23 @@
-import 'ens/resolver.sol';
-
 contract ENSAppInterface {
-    function set( ENSNode node, bytes32 key, bytes32 value );
-    function set_dir( ENSNode node, bytes32 key, ENSNode subnode );
+    function set( address node, bytes32 key, bytes32 value );
+    function set_dir( address node, bytes32 key, ENSNode subnode );
     // promote??
 
-    function new_node() returns (ENSNode);
-    function transfer( ENSNode node, bytes32 key, address new_owner );
-    function set_controller( ENSNode node, ENSNodeControllerInterface controller );
+    function new_node() returns (address);
+    function transfer( address node, bytes32 key, address new_owner );
+    function set_controller( address node, ENSNodeControllerInterface controller );
 
     // Resolver
-    function get( ENSNode node, bytes32 key) constant returns (bytes32 value);
+    function get( address node, bytes32 key) constant returns (bytes32 value);
     function resolve(bytes query) constant returns (bytes32 value);
-    function resolve_relative(ENSNode root, bytes query) constant returns (bytes32 value);
+    function resolve_relative(address root, bytes query) constant returns (bytes32 value);
 
-    function freeze_name( ENSNode node, bytes32 name );
-    function freeze_controller( ENSNode node );
+    function freeze_name( address node, bytes32 name );
+    function freeze_controller( address node );
     function is_fixed(bytes query) constant returns (bool);
 }
 
 contract ENSApp is ENSAppInterface
-                 , Resolver
 {
     struct entry {
         bool registered;
@@ -30,18 +27,17 @@ contract ENSApp is ENSAppInterface
         bool frozen;
     }
 
-
+    mapping( address => bool ) _known_node; // can_be_node
     bool[2**128] public               _is_node; // quick lookup for resolvers
-    ENSNode                           _root;
+    address                           _root;
 
-    mapping( ENSNode => mapping( bytes32 => entry ) ) entries;
-    node_config public config;
+    mapping( address => mapping( bytes32 => entry ) ) entries;
 
     function ENSApp() {
         _root = new_node();
     }
-    function new_node() returns (ENSNode) {
-        var node = new ENSNode();
+    function new_node() returns (address) {
+        var node = address(0x0);
         _known_node[node] = true;
         _is_node[node] = true;
         return node;
@@ -49,7 +45,7 @@ contract ENSApp is ENSAppInterface
     function is_node(address node) constant returns (bool) {
         return _is_node[node];
     }
-    event name_set( ENSNode indexed node, bytes32 name );
+    event name_set( address indexed node, bytes32 name );
     function notify(bytes32 name)
     {
         if( _is_node[msg.sender] )

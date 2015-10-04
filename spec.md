@@ -28,7 +28,7 @@ User functions:
 get :: string -> bytes32, byte
 set :: string -> bytes32 -> ens_type_id
 
-`resolve( string query ) returns ( bytes32 value, bool is_dir )`
+`resolve( string query ) returns ( bytes32 value, bool success )`
 
 `set( string path, bytes32 value)`
 `set_dir( string path, ENSNode dir)`
