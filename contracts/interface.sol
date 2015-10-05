@@ -1,26 +1,23 @@
+
+contract ENSControllerInterface {
+    // TODO temporary
+    function last_ok() returns (bool ok);
+
+    function ens_set( address caller, bytes32 key, bytes32 value ) returns (bool ok);
+    function ens_get( bytes32 key ) returns (bytes32 value, bool ok);
+    function ens_can_freeze( address caller, bytes32 key ) returns (bool can);
+}
+
+
 contract ENSInterface {
-    struct entry {
-        bytes32 value;
-        byte flags;
-        bool is_frozen;
-        bool is_node;
-    }
-    struct node {
-        uint node_id;
-        ENSNodeControllerInterface controller;
-        mapping( bytes => entry ) frozen_entries;
-    }
+    // TODO temporary
+    function last_ok() returns (bool ok);
+    function query( string query_string ) returns ( bytes32 value, bool ok );
+    function store( string path_string, bytes32 value ) returns (bool ok);
 
+    function set( address node, bytes32 key, bytes32 value ) returns (bool ok);
+    function get( address node, bytes32 key ) returns (bytes32 value, bool ok);
+    function freeze( address node, bytes32 key ) returns (bool ok);
 
-//    function set( uint node_id, bytes key, bytes32 value, byte flags ) returns (bool);
-
-    // @dev If the value is zero, check the flags to ensure it is not an error
-//    function get( uint node_id, bytes key) returns (bytes32 value, bool success);
-//    function freeze( uint node_id, bytes key ) returns (bool);
-
-/*
-    function set( string path, bytes32 value ) returns (bool);
-    function get( string path ) returns (bytes32 value, byte flags);
-    function freeze( string path ) returns (bool);
-*/
+    function register() returns (bool);
 }

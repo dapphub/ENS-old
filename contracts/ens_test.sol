@@ -6,37 +6,37 @@ contract ENSTest is Test {
     ENS_Controller_CuratedNamereg c;
     function setUp() {
         c = new ENS_Controller_CuratedNamereg();
-        ens = new ENS( ENSNodeControllerInterface( c ) );
-        c.ens_controller_init(0);
+        ens = new ENS( address( c ) );
+        c.ens_controller_init();
         c.init_usermock(ens);
-        ens.set(0, "key", "value");
+        ens.set(c, "key", "value");
     }
     function testRootNodeConfigured() {
-        assertEq( c, address(ens.get_controller(0)), "wrong root controller");
+        assertEq( c, address(ens.root()), "wrong root controller");
         assertEq( me, c.owner(), "wrong root controller owner" );
     }
     function testCuratedNameRegController() {
-//        assertEq32("value", c.ens_get("key"), "controller gets wrong key");
-        assertEq32("value", ens.get(0, "key"), "app gets wrong key");
+        assertEq32("value", c.ens_get("key"), "controller gets wrong key");
+        assertEq32("value", ens.get(c, "key"), "app gets wrong key");
 
-        assertTrue( ens.set(0, "key", "value2") );
-        assertEq32( "value2", ens.get(0, "key"), "wrong value after set" );
-        assertTrue( ens.freeze( 0, "key" ) );
-        assertFalse( ens.set(0, "key", "other_value" ) );
-        assertEq32( "value2", ens.get(0, "key"), "wrong value after set attempt" );
+        assertTrue( ens.set(c, "key", "value2"), "can't re-set key" );
+        assertEq32( "value2", ens.get(c, "key"), "wrong value after set" );
+        assertTrue( ens.freeze( c, "key" ), "can't freeze key" );
+        assertFalse( ens.set(c, "key", "other_value" ) );
+        assertEq32( "value2", ens.get(c, "key"), "wrong value after set attempt" );
     }
     function testResolve() {
-        bytes32 ret = ens.get( 0, "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf" );
+        bytes32 ret = ens.get( c, "axsdfasdfasdfasdsdfasdf");
         log_bytes32(ret);
     }
     function testCuratedNameregGet()
              logs_gas()
     {
-        ens.get(0, "key");
+        ens.get(c, "key");
     }
     function testCuratedNameregSet()
              logs_gas()
     {
-        ens.set(0, "key", "value");
+        ens.set(c, "key", "value");
     }
 }
