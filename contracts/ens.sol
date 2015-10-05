@@ -49,9 +49,15 @@ contract ENS is ENSInterface
     }
     function get( address node, bytes32 key ) returns (bytes32 value, bool ok) {
         _last_ok = false;
-        var controller = ENSControllerInterface(node);
-        value = controller.ens_get( key );
-        ok = controller.last_ok();
+        var entry = _frozen_entries[node][key];
+        if( entry.is_frozen ) {
+            value = entry.value;
+            ok = true;
+        } else {
+            var controller = ENSControllerInterface(node);
+            value = controller.ens_get( key );
+            ok = controller.last_ok();
+        }
         _last_ok = ok;
     }
     function freeze( address node, bytes32 key ) returns (bool ok) {
@@ -62,6 +68,7 @@ contract ENS is ENSInterface
             var value = controller.ens_get( key );
             var controller_ok = controller.last_ok();
             if( !controller_ok ) {
+                _last_ok = false;
                 return false;
             }
             var entry = _frozen_entries[node][key];

@@ -5,11 +5,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
                                         , ENSUser
 {
     address public owner;
-    // TODO remove app from constructor
-    function ENS_Controller_CuratedNamereg()
-    {
-        owner = msg.sender;
-    }
+
     bool _last_ok;
     function last_ok() returns (bool) {
         return _last_ok;
@@ -17,7 +13,8 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
 
     mapping( bytes32 => bytes32 ) values;
 
-    function ens_controller_init() returns (bool) {
+    function ens_controller_init( address _owner ) returns (bool) {
+        owner = _owner;
         ens.register();
     }
     function ens_set( address caller, bytes32 key, bytes32 value )

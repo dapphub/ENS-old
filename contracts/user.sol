@@ -1,3 +1,5 @@
+import 'core/debug.sol';
+
 // TODO replace mock with proper mixin by removing init_usermock and using CONSTANT macro
 contract ENSUser is Debug {
     ENS ens;
