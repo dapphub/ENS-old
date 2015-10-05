@@ -18,7 +18,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
     mapping( bytes32 => bytes32 ) values;
 
     function ens_controller_init() returns (bool) {
-        ens().register();
+        ens.register();
     }
     function ens_set( address caller, bytes32 key, bytes32 value )
              ens_only()
