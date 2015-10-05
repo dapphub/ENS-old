@@ -5,7 +5,7 @@ contract ENSControllerInterface {
 
     function ens_set( address caller, bytes32 key, bytes32 value ) returns (bool ok);
     function ens_get( bytes32 key ) returns (bytes32 value, bool ok);
-    function ens_can_freeze( address caller, bytes32 key ) returns (bool can);
+    function ens_freeze( address caller, bytes32 key ) returns (bool ok);
 }
 
 

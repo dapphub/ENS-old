@@ -1,10 +1,12 @@
 import 'interface.sol';
+import 'resolver.sol';
 
 
 // TODO remove last_ok everywhere !!
 contract ENS is ENSInterface
+              , Resolver
 {
-    bool _last_ok; //TODO remove
+    bool _last_ok; //TODO this can be removed when we can get multiple return values
     function last_ok() returns (bool) {
         return _last_ok;
     }
@@ -12,14 +14,20 @@ contract ENS is ENSInterface
         bytes32 value;
         bool is_frozen;
     }
-    address public root;
-    function ENS( address root_controller )  {
+    ENSControllerInterface public root;
+    function ENS( ENSControllerInterface root_controller )  {
         _traversable[root] = true;
         root = root_controller;
     }
 
     mapping( address => mapping( bytes32 => frozen_entry ) ) _frozen_entries;
     mapping( address => bool ) _traversable;
+
+    function resolve(bytes query)
+             constant
+             returns (bytes32 value) {
+        return resolve_relative(root, query);
+    }
 
 
     function register() returns (bool) {
@@ -63,7 +71,7 @@ contract ENS is ENSInterface
     function freeze( address node, bytes32 key ) returns (bool ok) {
         _last_ok = false;
         var controller = ENSControllerInterface(node);
-        ok = controller.ens_can_freeze( msg.sender, key );
+        ok = controller.ens_freeze( msg.sender, key );
         if( ok ) {
             var value = controller.ens_get( key );
             var controller_ok = controller.last_ok();

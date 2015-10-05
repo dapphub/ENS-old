@@ -28,7 +28,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
         }
         return false;
     }
-    function ens_can_freeze( address caller, bytes32 key )
+    function ens_freeze( address caller, bytes32 key )
              ens_only()
              returns (bool)
     {
