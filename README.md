@@ -4,8 +4,7 @@ Ether Name System
 
 ENS is the ultimate namereg contract.
 
-The system consists of a tree of nodes which each contain a key-value store. Nodes are built using a 
-factory contract built into the system and all have the same structure. Users traverse
+The system consists of a tree of nodes which each contain a key-value store. Users traverse
 the system using a contract which knows how to interpret values as subregistrars and
 when it is correct to do so.
 
@@ -24,13 +23,13 @@ in a loop:
 Scan ahead in the query string until the next unescaped "/". This is your key.
 Resolve the key using the query node. This is your value.
 If it's a directory, interpret the value as an address, set it as the query node, and repeat loop.
-otherwise, return the address.
+otherwise, return the value.
 
 
 Examples
 ----
 
-/dns/query/com/google/
+/dns/com/google/
 
 /feed/provider/type/
 
@@ -38,9 +37,10 @@ Examples
 
 /f/user
 
-/u/
 
-
+The `/` namespace has a controller which can ONLY add frozen entries. It is initially controlled by a multisig of members of Nexus Development,
+but control can and will be transferred to a stake-vote system with its own asset. This will likely be distributed using an AGS-style fundraiser,
+meaning everyone is on the same footing for buying control.
 
 The `/f/` namespace is controlled by a simple *f*ree, *f*irst-come-*f*irst-serve, *f*rozen, *f*ree-for-all registrar.
 
@@ -51,20 +51,3 @@ The `/f/` namespace is controlled by a simple *f*ree, *f*irst-come-*f*irst-serve
             
         }
     }
-
-var f = e.get('/f');  // free first-come first-serve registrar
-
-
-e://f/nikolai/
-
-bytes32 ipfs_homepage = ENS( '/f/nikolai/ipfs' );
-
-
-
-
-
-
-extra
----
-
-ens nodes are direct key-value maps.
