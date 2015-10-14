@@ -1,0 +1,9 @@
+name: 'my_dapple_package'
+version: '0.0.1a'
+source_dir: 'contracts'
+ignore:
+    - admin.sol
+    - node.sol
+    - check_depth.sol
+dependencies:
+    core: 'latest'

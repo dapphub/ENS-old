@@ -1,15 +1,11 @@
+import 'interface.sol';
 
 contract Resolver {
     // override this
     function is_node( address a ) constant internal returns (bool) {
         return false;
     }
-    function resolve(bytes query)
-             constant
-             returns (bytes32 value) {
-        return resolve_relative(_root, query);
-    }
-    function resolve_relative(ENSNode root, bytes query)
+    function resolve_relative(ENSControllerInterface root, bytes query)
              constant
              returns (bytes32 value)
     {
@@ -24,17 +20,25 @@ contract Resolver {
                 if( is_valid_character(c) ) {
                     partial[j] = query[i];
                 } else if (is_separator(c)) {
-                    var value = node.get(partial);
-                    if( _is_node[address(value)] ) {
-                        node = ENSNode(value);
+                    value = node.get(partial);
+                    if( is_node(address(value)) ) {
+                        node = ENSControllerInterface(value);
                         position = i+1;
                         break;
                     }
                 }
                 j++;
             }
-            return values[partial];
+            return 0x0;
         }
     }
+    function is_valid_character(byte c) internal returns (bool) {
+        return true;
+    }
+    function is_separator(byte c) internal returns (bool) {
+        return true;
+    }
+
+
 }
 
