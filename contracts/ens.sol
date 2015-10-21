@@ -103,36 +103,44 @@ contract ENS is ENSInterface
 
     // resolver implementation
     bytes partial;
-    function is_node( bytes32 value ) constant internal returns (bool, uint id) {
-        return (false, 0);
+    function get_node( bytes32 value ) constant internal returns (uint id, bool is_node) {
+        return (0, false);
     }
     function resolve_relative(ENSControllerInterface root, bytes query)
              constant
-             returns (bytes value)
+             returns (bytes32 value, bool ok)
     {
         uint node = 1; // root node ID
         uint offset = 0;
-        bool ok = false;
         uint i;
         while(true) {
             partial.length = 0;
-            for( i = 0; i < query.length; i++ ) {
+            for( i = 0; offset+i < query.length; i++ ) {
+                bool is_node = false;
                 byte c = query[offset + i];
                 if( is_separator(c) ) {
                     if( i == 0 ) {
                         continue;
                     }
-                    (value, ok) = node.ens_get(node, msg.sender, partial);
-                    if( is_node(address(value)) ) {
-                        node = ENSControllerInterface(value);
+                    var controller = _controllers[node];
+                    (value, ok) = controller.ens_get(node, msg.sender, partial);
+                    if( !ok ) {
+                        return (0x0, false);
+                    }
+                    (node, is_node) = get_node(value);
+                    if( is_node ) {
                         offset = offset+i+1;
                         break;
+                    } else {
+                        return (value, true);
                     }
                 } else {
                     partial.push(query[offset + i]);
                 }
             }
-            return 0x0;
+            if( i == query.length-1 ) {
+                return (value, true);
+            }
         }
     }
     function is_separator(byte c) internal returns (bool) {
