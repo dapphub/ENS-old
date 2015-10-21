@@ -21,11 +21,13 @@ contract ENSTester is ENSUser {
 contract ENSTest is Test {
     ENS ens;
     ENS_Controller_CuratedNamereg root;
+    StandardRegistryController std;
     uint root_id;
     ENSTester A;
     function setUp() {
         root = new ENS_Controller_CuratedNamereg();
         ens = new ENS( root );
+        std = new StandardRegistryController( ens );
         A = new ENSTester( ens );
         root_id = root.ens_controller_init( ens, A );
         root.init_usermock(ens);
