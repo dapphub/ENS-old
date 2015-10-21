@@ -4,20 +4,20 @@ import 'user.sol';
 contract ENS_Controller_CuratedNamereg is ENSControllerInterface
                                         , ENSUser
 {
-    address public owner;
+    address public curator;
 
     mapping( bytes => bytes32 ) values;
 
-    function ens_controller_init( ENS app, address _owner ) returns (uint) {
+    function ens_controller_init( ENS app, address _curator ) returns (uint) {
         init_usermock( app );
-        owner = _owner;
+        curator = _curator;
         return ens.new_node();
     }
     function ens_set( uint node, address caller, bytes key, bytes32 value )
              ens_only()
              returns (bool)
     {
-        if( caller == owner ) {
+        if( caller == curator ) {
             values[key] = value;
             return true;
         }
@@ -27,7 +27,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
              ens_only()
              returns (bool)
     {
-        if( caller == owner ) {
+        if( caller == curator ) {
             return true;
         }
         return false;

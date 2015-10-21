@@ -38,6 +38,13 @@ contract ENS is ENSInterface
         next_id++;
         return ret;
     }
+    function path_info( bytes path ) returns (uint node_id, bytes last_key, bool ok) {
+        bytes memory ret;
+        return (0, ret, false);
+    }
+    function transfer_node( uint node, ENSControllerInterface new_controller) returns (bool ok) {
+        return false;
+    }
 
     function get( bytes path ) returns ( bytes32 value, bool ok ) {
         return (bytes32(0x0), false);

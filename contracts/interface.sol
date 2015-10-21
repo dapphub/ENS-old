@@ -7,7 +7,8 @@ contract ENSControllerInterface {
 
 contract ENSInterface {
     function new_node() returns (uint node);
-    //function node_info( bytes query_string) returns (uint node_id, bytes last_key, bool ok);
+    function transfer_node( uint node, ENSControllerInterface new_controller) returns (bool ok);
+    function path_info( bytes path) returns (uint node_id, bytes last_key, bool ok);
 
     function get( bytes path ) returns ( bytes32 value, bool ok );
     function set( bytes path, bytes32 value ) returns ( bool ok );

@@ -33,7 +33,7 @@ contract ENSTest is Test {
     }
     function testRootNodeConfigured() {
         assertEq( root, address(ens.root()), "wrong root controller");
-        assertEq( A, root.owner(), "wrong root controller owner" );
+        assertEq( A, root.curator(), "wrong root controller owner" );
     }
     function testRootNodeController() {
         var (val, ok) = root.ens_get(root_id, me, "key");
