@@ -8,13 +8,13 @@ contract ENSTester is ENSUser {
         init_usermock(app);
     }
     function do_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
-        return ens.set( node, key, value );
+        return ens.node_set( node, key, value );
     }
     function do_get( uint node, bytes key ) returns (bytes32 value, bool ok) {
-        return ens.get( node, key );
+        return ens.node_get( node, key );
     }
     function do_freeze( uint node, bytes key ) returns (bool ok) {
-        return ens.freeze(node, key);
+        return ens.node_freeze(node, key);
     }
 }
 
@@ -38,27 +38,28 @@ contract ENSTest is Test {
     function testRootNodeController() {
         var (val, ok) = root.ens_get(root_id, me, "key");
         assertEq32("value", val, "controller gets wrong key");
-        (val, ok) = ens.get(root_id, "key");
+        (val, ok) = ens.node_get(root_id, "key");
         assertEq32("value", val, "app gets wrong key");
 
         assertTrue( A.do_set(root_id, "key", "value2"), "can't re-set key" );
-        (val, ok) = ens.get(root_id, "key");
+        (val, ok) = ens.node_get(root_id, "key");
         assertEq32( "value2", val, "wrong value after set" );
         assertTrue( A.do_freeze( root_id, "key" ), "can't freeze key" );
-        (val, ok) = ens.get(root_id, "key");
+        (val, ok) = ens.node_get(root_id, "key");
         assertEq32( "value2", val, "wrong value after set attempt" );
     }
     function testResolve() {
-        var (ret, ok) = ens.get( root_id, "axsdfasdfasdfasdsdfasdf");
+        var (ret, ok) = ens.node_get( root_id, "axsdfasdfasdfasdsdfasdf");
+        assertEq32( ret, 0x0 );
     }
     function testCuratedNameregGet()
              logs_gas()
     {
-        ens.get(root_id, "key");
+        ens.node_get(root_id, "key");
     }
     function testCuratedNameregSet()
              logs_gas()
     {
-        ens.set(root_id, "key", "value");
+        ens.node_set(root_id, "key", "value");
     }
 }

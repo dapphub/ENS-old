@@ -6,12 +6,15 @@ contract ENSControllerInterface {
 
 
 contract ENSInterface {
-//    function node_id( bytes query_string ) returns (uint id, bool ok);
-    function query( bytes query_string ) returns ( bytes32 value, bool ok );
-    function freeze( uint node, bytes key ) returns (bool ok);
-    function register() returns (uint node);
+    function new_node() returns (uint node);
+    //function node_info( bytes query_string) returns (uint node_id, bytes last_key, bool ok);
 
-    function set( uint node, bytes key, bytes32 value ) returns (bool ok);
-//    function set_as_controller( uint node, bytes key, uint subnode ) returns (bool ok);
+    function get( bytes path ) returns ( bytes32 value, bool ok );
+    function set( bytes path, bytes32 value ) returns ( bool ok );
+    function freeze( bytes path ) returns (bool ok);
+
+    function node_get( uint node, bytes key ) returns ( bytes32 value, bool ok );
+    function node_set( uint node, bytes key, bytes32 value ) returns ( bool ok );
+    function node_freeze( uint node, bytes key ) returns (bool ok);
 
 }
