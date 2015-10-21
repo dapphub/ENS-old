@@ -16,11 +16,7 @@ contract ENSAdminController is ENSNodeControllerInterface
         return caller == admin;
     }
     function can_toggle_subregistry( address caller, bytes32 name ) returns (bool);
-        return caller == admin;
     function can_freeze_name( address caller, bytes32 name ) returns (bool);
-        return caller == admin;
     function can_freeze_controller( address caller, bytes32 name ) returns (bool);
-        return caller == admin;
     function can_revoke( address caller, bytes32 name ) returns (bool);
-        return caller == admin;
 }

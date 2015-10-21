@@ -6,29 +6,23 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
 {
     address public owner;
 
-    bool _last_ok;
-    function last_ok() returns (bool) {
-        return _last_ok;
-    }
+    mapping( bytes => bytes32 ) values;
 
-    mapping( bytes32 => bytes32 ) values;
-
-    function ens_controller_init( address _owner ) returns (bool) {
+    function ens_controller_init( ENSInterface ens, address _owner ) returns (uint) {
         owner = _owner;
-        ens.register();
+        return ens.register();
     }
-    function ens_set( address caller, bytes32 key, bytes32 value )
+    function ens_set( uint node, address caller, bytes key, bytes32 value )
              ens_only()
              returns (bool)
     {
-        //logs("in controller set");
         if( caller == owner ) {
             values[key] = value;
             return true;
         }
         return false;
     }
-    function ens_freeze( address caller, bytes32 key )
+    function ens_freeze( uint node, address caller, bytes key )
              ens_only()
              returns (bool)
     {
@@ -37,10 +31,8 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
         }
         return false;
     }
-    function ens_get(bytes32 key) returns (bytes32 value, bool ok) {
+    function ens_get( uint node, address caller, bytes key) returns (bytes32 value, bool ok) {
         //logs("in controller get");
-        value = values[key];
-        ok = true;
-        _last_ok = true;
+        return (values[key], true);
     }
 }

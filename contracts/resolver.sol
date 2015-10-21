@@ -1,26 +1,28 @@
 import 'interface.sol';
 
 contract Resolver {
-    // override this
+    bytes partial;
     function is_node( address a ) constant internal returns (bool) {
         return false;
     }
     function resolve_relative(ENSControllerInterface root, bytes query)
              constant
-             returns (bytes32 value)
+             returns (bytes value)
     {
-        var node = root;
+        ENSControllerInterface node;
+        node = root;
         uint position = 0;
+        bool ok = false;
         while(true) {
-            bytes32 partial = 0x0;
+            partial.length = 0;
             var i = position;
             var j = 0;
             for( ; i < query.length; i++ ) {
                 byte c = query[i];
                 if( is_valid_character(c) ) {
-                    partial[j] = query[i];
+                    partial.push(query[i]);
                 } else if (is_separator(c)) {
-                    value = node.get(partial);
+                    (value, ok) = node.ens_get(partial);
                     if( is_node(address(value)) ) {
                         node = ENSControllerInterface(value);
                         position = i+1;

@@ -7,14 +7,13 @@ contract ENSTester is ENSUser {
     {
         init_usermock(app);
     }
-    function do_set( address node, bytes32 key, bytes32 value ) returns (bool ok) {
+    function do_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
         return ens.set( node, key, value );
     }
-    function do_get( address node, bytes32 key ) returns (bytes32 value, bool ok) {
-        value = ens.get( node, key );
-        ok = ens.last_ok();
+    function do_get( uint node, bytes key ) returns (bytes32 value, bool ok) {
+        return ens.get( node, key );
     }
-    function do_freeze( address node, bytes32 key ) returns (bool ok) {
+    function do_freeze( uint node, bytes key ) returns (bool ok) {
         return ens.freeze(node, key);
     }
 }
@@ -22,40 +21,44 @@ contract ENSTester is ENSUser {
 contract ENSTest is Test {
     ENS ens;
     ENS_Controller_CuratedNamereg root;
+    uint root_id;
     ENSTester A;
     function setUp() {
         root = new ENS_Controller_CuratedNamereg();
-        ens = new ENS( address( root ) );
+        ens = new ENS( root );
         A = new ENSTester( ens );
-        root.ens_controller_init( A );
+        root_id = root.ens_controller_init( ens, A );
         root.init_usermock(ens);
-        A.do_set(root, "key", "value");
+        A.do_set(root_id, "key", "value");
     }
     function testRootNodeConfigured() {
         assertEq( root, address(ens.root()), "wrong root controller");
         assertEq( A, root.owner(), "wrong root controller owner" );
     }
     function testRootNodeController() {
-        assertEq32("value", root.ens_get("key"), "controller gets wrong key");
-        assertEq32("value", ens.get(root, "key"), "app gets wrong key");
+        var (val, ok) = root.ens_get(root_id, me, "key");
+        assertEq32("value", val, "controller gets wrong key");
+        (val, ok) = ens.get(root_id, "key");
+        assertEq32("value", val, "app gets wrong key");
 
-        assertTrue( A.do_set(root, "key", "value2"), "can't re-set key" );
-        assertEq32( "value2", ens.get(root, "key"), "wrong value after set" );
-        assertTrue( A.do_freeze( root, "key" ), "can't freeze key" );
-        assertEq32( "value2", ens.get(root, "key"), "wrong value after set attempt" );
+        assertTrue( A.do_set(root_id, "key", "value2"), "can't re-set key" );
+        (val, ok) = ens.get(root_id, "key");
+        assertEq32( "value2", val, "wrong value after set" );
+        assertTrue( A.do_freeze( root_id, "key" ), "can't freeze key" );
+        (val, ok) = ens.get(root_id, "key");
+        assertEq32( "value2", val, "wrong value after set attempt" );
     }
     function testResolve() {
-        bytes32 ret = ens.get( root, "axsdfasdfasdfasdsdfasdf");
-        log_bytes32(ret);
+        var (ret, ok) = ens.get( root_id, "axsdfasdfasdfasdsdfasdf");
     }
     function testCuratedNameregGet()
              logs_gas()
     {
-        ens.get(root, "key");
+        ens.get(root_id, "key");
     }
     function testCuratedNameregSet()
              logs_gas()
     {
-        ens.set(root, "key", "value");
+        ens.set(root_id, "key", "value");
     }
 }

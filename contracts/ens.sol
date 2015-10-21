@@ -1,89 +1,82 @@
 import 'interface.sol';
-import 'resolver.sol';
+import 'core/debug.sol';
+//import 'resolver.sol';
 
-
-// TODO remove last_ok everywhere !!
 contract ENS is ENSInterface
-              , Resolver
+/*              , Resolver */
+                , Debug
 {
-    bool _last_ok; //TODO this can be removed when we can get multiple return values
-    function last_ok() returns (bool) {
-        return _last_ok;
-    }
     struct frozen_entry {
         bytes32 value;
         bool is_frozen;
     }
+
+    uint next_id;
     ENSControllerInterface public root;
+    mapping( uint => mapping( bytes => frozen_entry ) ) _frozen_entries;
+    mapping( uint => ENSControllerInterface ) _controllers;
+
+
     function ENS( ENSControllerInterface root_controller )  {
-        _traversable[root] = true;
+        next_id = 1;
         root = root_controller;
     }
 
-    mapping( address => mapping( bytes32 => frozen_entry ) ) _frozen_entries;
-    mapping( address => bool ) _traversable;
 
+/*
     function resolve(bytes query)
              constant
-             returns (bytes32 value) {
+             returns (bytes value) {
         return resolve_relative(root, query);
     }
+*/
 
 
-    function register() returns (bool) {
-        _traversable[msg.sender] = true;
+    function register() returns (uint) {
+        var ret = next_id;
+        _controllers[next_id] = ENSControllerInterface(msg.sender);
+        next_id++;
+        return ret;
     }
-        // mark as traversable
 
-    function query( string query_string ) returns ( bytes32 value, bool ok ) {
-        _last_ok = false;
-        value = 0x0;
-        ok = false;
+    function query( bytes query_string ) returns ( bytes32 value, bool ok ) {
+        return (bytes32(0x0), false);
     }
-    function store( string path_string, bytes32 value ) returns (bool ok) {
-        _last_ok = false;
-        ok = false;
-    }
-    function set( address node, bytes32 key, bytes32 value ) returns (bool ok) {
-        _last_ok = false;
+
+    function set( uint node, bytes key, bytes32 value ) returns (bool ok) {
         var entry = _frozen_entries[node][key];
         if( entry.is_frozen ) {
-            return entry.value == value; // TODO this could just be "return false" - decide!
+            return false;
         }
-        var controller = ENSControllerInterface(node);
-        ok = controller.ens_set( msg.sender, key, value );
-        _last_ok = ok;
+        var controller = _controllers[node];
+        ok = controller.ens_set( node, msg.sender, key, value );
         return ok;
     }
-    function get( address node, bytes32 key ) returns (bytes32 value, bool ok) {
-        _last_ok = false;
+    function get( uint node, bytes key ) returns (bytes32 value, bool ok) {
         var entry = _frozen_entries[node][key];
         if( entry.is_frozen ) {
-            value = entry.value;
-            ok = true;
+            return (entry.value, true);
         } else {
-            var controller = ENSControllerInterface(node);
-            value = controller.ens_get( key );
-            ok = controller.last_ok();
+            var controller = _controllers[node];
+            (value, ok) = controller.ens_get( node, msg.sender, key );
+            return (value, ok);
         }
-        _last_ok = ok;
     }
-    function freeze( address node, bytes32 key ) returns (bool ok) {
-        _last_ok = false;
-        var controller = ENSControllerInterface(node);
-        ok = controller.ens_freeze( msg.sender, key );
+    function freeze( uint node, bytes key ) returns (bool ok) {
+        var controller = _controllers[node];
+        ok = controller.ens_freeze( node, msg.sender, key );
         if( ok ) {
-            var value = controller.ens_get( key );
-            var controller_ok = controller.last_ok();
-            if( !controller_ok ) {
-                _last_ok = false;
+            bytes32 value;
+            (value, ok) = controller.ens_get( node, msg.sender, key );
+            if( !ok ) {
                 return false;
             }
             var entry = _frozen_entries[node][key];
             entry.is_frozen = true;
             entry.value = value;
+            return true;
+        } else {
+            return false;
         }
-        _last_ok = ok;
-        return ok;
     }
 }
