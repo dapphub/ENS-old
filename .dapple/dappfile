@@ -19,10 +19,7 @@ source_dir: 'contracts'
 
 # A list of files to ignore, relative to "source_dir."
 #
-ignore:
-    - admin.sol
-    - node.sol
-    - resolver.sol
+# ignore:
 
 # A map of preprocessor variable names to values to
 # pass on to your preprocessor. For example, the

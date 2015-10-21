@@ -1,9 +1,7 @@
 import 'interface.sol';
 import 'core/debug.sol';
-//import 'resolver.sol';
 
 contract ENS is ENSInterface
-/*              , Resolver */
                 , Debug
 {
     struct frozen_entry {
@@ -43,6 +41,9 @@ contract ENS is ENSInterface
         return (0, ret, false);
     }
     function transfer_node( uint node, ENSControllerInterface new_controller) returns (bool ok) {
+        if( msg.sender == address(_controllers[node]) ) {
+            _controllers[node] = new_controller;
+        }
         return false;
     }
 
@@ -92,4 +93,55 @@ contract ENS is ENSInterface
             return false;
         }
     }
+
+
+
+
+
+
+
+
+    // resolver implementation
+    bytes partial;
+    function is_node( bytes32 value ) constant internal returns (bool, uint id) {
+        return (false, 0);
+    }
+    function resolve_relative(ENSControllerInterface root, bytes query)
+             constant
+             returns (bytes value)
+    {
+        uint node = 1; // root node ID
+        uint offset = 0;
+        bool ok = false;
+        uint i;
+        while(true) {
+            partial.length = 0;
+            for( i = 0; i < query.length; i++ ) {
+                byte c = query[offset + i];
+                if( is_separator(c) ) {
+                    if( i == 0 ) {
+                        continue;
+                    }
+                    (value, ok) = node.ens_get(node, msg.sender, partial);
+                    if( is_node(address(value)) ) {
+                        node = ENSControllerInterface(value);
+                        offset = offset+i+1;
+                        break;
+                    }
+                } else {
+                    partial.push(query[offset + i]);
+                }
+            }
+            return 0x0;
+        }
+    }
+    function is_separator(byte c) internal returns (bool) {
+        return c == byte("/");
+    }
+    function is_escape(byte c) internal returns (bool) {
+        return c == byte("\\");
+    }
+
+
+
 }
