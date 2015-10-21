@@ -8,13 +8,13 @@ contract ENSTester is ENSUser {
     {
         init_usermock(app);
     }
-    function do_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
+    function do_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
         return ens.node_set( node, key, value );
     }
-    function do_get( uint node, bytes32 key ) returns (bytes32 value, bool ok) {
+    function do_get( uint node, bytes key ) returns (bytes32 value, bool ok) {
         return ens.node_get( node, key );
     }
-    function do_freeze( uint node, bytes32 key ) returns (bool ok) {
+    function do_freeze( uint node, bytes key ) returns (bool ok) {
         return ens.node_freeze(node, key);
     }
 }
