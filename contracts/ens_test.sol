@@ -1,19 +1,20 @@
 import 'core/test.sol';
 import 'ens.sol';
-import 'user.sol';
+import 'controllers/curated_root.sol';
+import 'controllers/standard_registry.sol';
 
 contract ENSTester is ENSUser {
-    function ENSTester(ENS app)
+    function ENSTester( ENS app )
     {
         init_usermock(app);
     }
-    function do_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
+    function do_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         return ens.node_set( node, key, value );
     }
-    function do_get( uint node, bytes key ) returns (bytes32 value, bool ok) {
+    function do_get( uint node, bytes32 key ) returns (bytes32 value, bool ok) {
         return ens.node_get( node, key );
     }
-    function do_freeze( uint node, bytes key ) returns (bool ok) {
+    function do_freeze( uint node, bytes32 key ) returns (bool ok) {
         return ens.node_freeze(node, key);
     }
 }
@@ -21,11 +22,13 @@ contract ENSTester is ENSUser {
 contract ENSTest is Test {
     ENS ens;
     ENS_Controller_CuratedNamereg root;
+    StandardRegistryController std;
     uint root_id;
     ENSTester A;
     function setUp() {
         root = new ENS_Controller_CuratedNamereg();
         ens = new ENS( root );
+        std = new StandardRegistryController( ens );
         A = new ENSTester( ens );
         root_id = root.ens_controller_init( ens, A );
         root.init_usermock(ens);

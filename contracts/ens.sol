@@ -13,7 +13,7 @@ contract ENS is ENSInterface
 
     uint next_id;
     ENSControllerInterface public root;
-    mapping( uint => mapping( bytes => frozen_entry ) ) _frozen_entries;
+    mapping( uint => mapping( bytes32 => frozen_entry ) ) _frozen_entries;
     mapping( uint => ENSControllerInterface ) _controllers;
 
 
@@ -24,9 +24,9 @@ contract ENS is ENSInterface
 
 
 /*
-    function resolve(bytes query)
+    function resolve(bytes32 query)
              constant
-             returns (bytes value) {
+             returns (bytes32 value) {
         return resolve_relative(root, query);
     }
 */
@@ -38,25 +38,24 @@ contract ENS is ENSInterface
         next_id++;
         return ret;
     }
-    function path_info( bytes path ) returns (uint node_id, bytes last_key, bool ok) {
-        bytes memory ret;
-        return (0, ret, false);
+    function path_info( bytes32 path ) returns (uint node_id, bytes32 last_key, bool ok) {
+        return (0, bytes32(0), false);
     }
     function transfer_node( uint node, ENSControllerInterface new_controller) returns (bool ok) {
         return false;
     }
 
-    function get( bytes path ) returns ( bytes32 value, bool ok ) {
+    function get( bytes32 path ) returns ( bytes32 value, bool ok ) {
         return (bytes32(0x0), false);
     }
-    function set( bytes path, bytes32 value ) returns ( bool ok ) {
+    function set( bytes32 path, bytes32 value ) returns ( bool ok ) {
         return false;
     }
-    function freeze(bytes path) returns (bool ok) {
+    function freeze(bytes32 path) returns (bool ok) {
         return false;
     }
 
-    function node_get( uint node, bytes key ) returns (bytes32 value, bool ok) {
+    function node_get( uint node, bytes32 key ) returns (bytes32 value, bool ok) {
         var entry = _frozen_entries[node][key];
         if( entry.is_frozen ) {
             return (entry.value, true);
@@ -66,7 +65,7 @@ contract ENS is ENSInterface
             return (value, ok);
         }
     }
-    function node_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
+    function node_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         var entry = _frozen_entries[node][key];
         if( entry.is_frozen ) {
             return false;
@@ -75,7 +74,7 @@ contract ENS is ENSInterface
         ok = controller.ens_set( node, msg.sender, key, value );
         return ok;
     }
-    function node_freeze( uint node, bytes key ) returns (bool ok) {
+    function node_freeze( uint node, bytes32 key ) returns (bool ok) {
         var controller = _controllers[node];
         ok = controller.ens_freeze( node, msg.sender, key );
         if( ok ) {
