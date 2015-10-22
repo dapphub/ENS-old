@@ -1,3 +1,4 @@
+// Official source of truth is spec.md
 contract ENSControllerInterface {
     function ens_set( uint node, address caller, bytes key, bytes32 value ) returns (bool ok);
     function ens_get( uint node, address caller, bytes key ) returns (bytes32 value, bool ok);
