@@ -3,7 +3,7 @@
 import 'interface.sol';
 import 'user.sol';
 
-contract StandardRegistryController is ENSControllerInterface
+contract StandardRegistryController is ENSController
                                      , ENSUser
 {
     function StandardRegistryController( ENS ens ) {
@@ -33,16 +33,10 @@ contract StandardRegistryController is ENSControllerInterface
     }
     function _get( uint node, bytes key )
              internal
-             returns (bytes32 value, bool ok )
+             returns (bytes32 value, bool is_link, bool ok )
     {
-        return (entries[node][key].value, true);
+        return (entries[node][key].value, false, true);
     }
-    function _freeze( uint node, address caller, bytes key )
-             internal
-             returns (bool ok)
-    {
-    }
-
     function new_registry() returns ( uint node ) {
         return ens.new_node();
     }
@@ -56,21 +50,22 @@ contract StandardRegistryController is ENSControllerInterface
     function unregister( uint node, bytes key ) {
         _set( node, msg.sender, key, bytes32(0), address(0), false );
     }
-    function ens_set( uint node, address caller, bytes key, bytes32 value )
+    function ens_set( uint node, address caller, bytes key, bytes32 value, bool is_link )
              ens_only()
              returns (bool ok)
     {
         _set(node, caller, key, value, caller, true );
     }
     function ens_get( uint node, address caller, bytes key )
-             returns (bytes32 value, bool ok)
+             returns (bytes32 value, bool is_link, bool ok)
     {
         return _get( node, key );
     }
-    function ens_freeze( uint node, address caller, bytes key )
-             returns (bool ok)
+    function ens_link( uint node, address caller, bytes key, uint subnode )
+             returns (bytes32 value, bool is_link, bool ok)
     {
-        return false;
+        return _get( node, key );
     }
+
 
 }

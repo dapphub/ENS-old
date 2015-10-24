@@ -1,4 +1,7 @@
-toc
+ENS
+===
+
+TOC
 ---
 
 App ABI
@@ -14,38 +17,37 @@ Notes and Ideas
 App ABI
 ---
 
+    contract ENSApp {
+    }
 
-    function new_node() returns (uint node);
-    function transfer_node( uint node, ENSControllerInterface new_controller) returns (bool ok);
+maybe:
+
+    function long_value( bytes32 index ) returns (bytes value, bool ok);
+    
+    link()
+
+aux:
+
     function path_info( bytes path) returns (uint node_id, bytes last_key, bool ok);
+    function controller( uint node ) returns (ENSController controller);
 
-    function get( bytes path ) returns ( bytes32 value, bool ok );
-    function set( bytes path, bytes32 value ) returns ( bool ok );
-    function freeze( bytes path ) returns (bool ok);
-
-    function node_get( uint node, bytes key ) returns ( bytes32 value, bool ok );
-    function node_set( uint node, bytes key, bytes32 value ) returns ( bool ok );
-    function node_freeze( uint node, bytes key ) returns (bool ok);
 
 Controller ABI
 ---
 
-    function ens_set( uint node, address caller, bytes key, bytes32 value ) returns (bool ok);
-    function ens_get( uint node, address caller, bytes key ) returns (bytes32 value, bool ok);
-    function ens_freeze( uint node, address caller, bytes key ) returns (bool ok);
+    contract ENSControllerInterface {
+        function ens_get( uint node, address caller, bytes key ) returns (bytes32 value, bool ok);
+        function ens_set( uint node, address caller, bytes key, bytes32 value ) returns (bool ok);
+        function ens_link( uint node, address caller, bytes key, uint subnode ) returns (bool ok);
+        function ens_freeze( uint node, address caller, bytes key ) returns (bool ok);
+    }
 
 
 App Behavior
 -----------
 
 ENS will attempt to interact with registered controllers to resolve queries.
-ENS will act as if the controller implements the following interface:
-
-    contract ENSControllerInterface {
-        function ens_set( uint node, address caller, bytes key, bytes32 value ) returns (bool ok);
-        function ens_get( uint node, address caller, bytes key ) returns (bytes32 value, bool ok);
-        function ens_freeze( uint node, address caller, bytes key ) returns (bool ok);
-    }
+ENS will act as if the controller implements the controller interface above.
 
 
 * If ENS calls any controller function, then the `caller` argument is the sender to ENS (the sender's sender). If the sender is not ENS, this value is unreliable. Use the `ENSUser` mixin's `ens_sender_only(who)` modifier.
@@ -105,6 +107,9 @@ User Mixin
 
 Example controller types
 ------------------
+
+/ curators
+/f/ FCFS
 
 Deploy Sequence
 ---

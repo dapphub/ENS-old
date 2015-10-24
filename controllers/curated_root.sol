@@ -1,10 +1,14 @@
 import 'interface.sol';
 import 'user.sol';
 
-contract ENS_Controller_CuratedNamereg is ENSControllerInterface
+contract ENS_Controller_CuratedNamereg is ENSController
                                         , ENSUser
 {
     address public curator;
+    struct ENSEntry {
+        bytes32 value;
+        bool is_link;
+    }
 
     mapping( bytes => bytes32 ) values;
 
@@ -13,7 +17,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
         curator = _curator;
         return ens.new_node();
     }
-    function ens_set( uint node, address caller, bytes key, bytes32 value )
+    function ens_set( uint node, address caller, bytes key, bytes32 value, bool is_link)
              ens_only()
              returns (bool)
     {
@@ -23,17 +27,7 @@ contract ENS_Controller_CuratedNamereg is ENSControllerInterface
         }
         return false;
     }
-    function ens_freeze( uint node, address caller, bytes key )
-             ens_only()
-             returns (bool)
-    {
-        if( caller == curator ) {
-            return true;
-        }
-        return false;
-    }
-    function ens_get( uint node, address caller, bytes key) returns (bytes32 value, bool ok) {
-        //logs("in controller get");
-        return (values[key], true);
+    function ens_get( uint node, address caller, bytes key) returns (bytes32 value, bool is_link, bool ok) {
+        return (values[key], false, true);
     }
 }

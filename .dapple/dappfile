@@ -19,7 +19,8 @@ dependencies:
 
 # A list of files to ignore, relative to "source_dir."
 #
-# ignore:
+#ignore:
+#    - controllers/standard_registry.sol
 
 # A map of preprocessor variable names to values to
 # pass on to your preprocessor. For example, the
