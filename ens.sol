@@ -5,14 +5,8 @@ import 'core/debug.sol';
 contract ENS is ENSApp
               , Debug
 {
-    struct frozen_entry {
-        bytes32 value;
-        bool is_frozen;
-    }
-
     uint next_id;
     ENSController public root;
-    mapping( uint => mapping( bytes => frozen_entry ) ) _frozen_entries;
     mapping( uint => ENSController ) _controllers;
 
     function ENS( ENSController root_controller )  {
@@ -20,56 +14,57 @@ contract ENS is ENSApp
         root = root_controller;
     }
 
-
-    function new_node() returns (uint) {
+    function new_node() returns (uint) { return claim_node(); }
+    function claim_node() returns (uint) {
         var ret = next_id;
         _controllers[next_id] = ENSController(msg.sender);
         next_id++;
         return ret;
     }
-    function get( bytes path ) returns ( bytes32 value, bool ok ) {
-        return resolve_relative( root, path );
+    function get_controller( uint node ) returns (ENSController controller, bool ok) {
+        return (_controllers[node], true);
+    }
+    function get( bytes path ) returns ( bytes32 value, bool is_link, bool ok ) {
+        (, , value, is_link, ok) = resolve_path( path );
+        if( ok ) {
+            return (value, is_link, ok);
+        } else {
+            return (0x0, false, false);
+        }
     }
     function set( bytes path, bytes32 value, bool is_link ) returns ( bool ok ) {
-        return false;
+        var (node, key, , , path_ok) = resolve_path( path );
+        if( path_ok ) {
+            var controller = _controllers[node];
+            return controller.ens_set( node, key, value, is_link );
+        } else {
+            return false;
+        }
     }
 
     function node_get( uint node, bytes key ) returns (bytes32 value, bool is_link, bool ok) {
-        var entry = _frozen_entries[node][key];
-        if( entry.is_frozen ) {
-            return (entry.value, false, true);
-        } else {
-            var controller = _controllers[node];
-            (value, is_link, ok) = controller.ens_get( node, msg.sender, key );
-            return (value, is_link, ok);
-        }
+        var controller = _controllers[node];
+        return controller.ens_get( node, msg.sender, key );
     }
     function node_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
-        var entry = _frozen_entries[node][key];
-        if( entry.is_frozen ) {
-            return false;
-        }
         var controller = _controllers[node];
-        ok = controller.ens_set( node, msg.sender, key, value, false );
-        return ok;
+        return controller.ens_set( node, msg.sender, key, value, false );
     }
 
 
-    // resolver implementation
-    bytes partial;
-    function get_node( bytes32 value ) constant internal returns (uint id, bool is_node) {
-        return (0, false);
-    }
-    function resolve_relative(ENSController root, bytes query)
+    function resolve_path( bytes query ) 
              constant
-             returns (bytes32 value, bool ok)
+             internal
+             returns (uint ret_node, bytes32 key, bytes32 value, bool is_link, bool ok)
     {
+        return (1, 0x0, 0x0, false, false);
+/*
         uint node = 1; // root node ID
         uint offset = 0;
         uint i;
         bool is_link;
         while(true) {
-            partial.length = 0;
+            bytes32 partial;
             for( i = 0; offset+i < query.length; i++ ) {
                 bool is_node = false;
                 byte c = query[offset + i];
@@ -82,8 +77,7 @@ contract ENS is ENSApp
                     if( !ok ) {
                         return (0x0, false);
                     }
-                    (node, is_node) = get_node(value);
-                    if( is_node ) {
+                    if( is_link ) {
                         offset = offset+i+1;
                         break;
                     } else {
@@ -97,6 +91,7 @@ contract ENS is ENSApp
                 return (value, true);
             }
         }
+*/
     }
     function is_separator(byte c) internal returns (bool) {
         return c == byte("/");

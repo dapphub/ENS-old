@@ -5,9 +5,10 @@ contract ENSController {
 
 
 contract ENSApp {
-    function new_node() returns (uint node);
+    function claim_node() returns (uint node);
+    function get_controller( uint node ) returns (ENSController controller, bool ok);
 
-    function get( bytes path ) returns ( bytes32 value, bool ok );
+    function get( bytes path ) returns ( bytes32 value, bool is_link, bool ok );
     function set( bytes path, bytes32 value, bool is_link ) returns ( bool ok );
 
     function node_get( uint node, bytes key ) returns ( bytes32 value, bool is_link, bool ok );
