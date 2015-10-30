@@ -36,17 +36,17 @@ contract ENS is ENSApp
         var (node, key, , , path_ok) = resolve_path( path );
         if( path_ok ) {
             var controller = _controllers[node];
-            return controller.ens_set( node, key, value, is_link );
+            return controller.ens_set( node, msg.sender, key, value, is_link );
         } else {
             return false;
         }
     }
 
-    function node_get( uint node, bytes key ) returns (bytes32 value, bool is_link, bool ok) {
+    function node_get( uint node, bytes32 key ) returns (bytes32 value, bool is_link, bool ok) {
         var controller = _controllers[node];
         return controller.ens_get( node, msg.sender, key );
     }
-    function node_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
+    function node_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         var controller = _controllers[node];
         return controller.ens_set( node, msg.sender, key, value, false );
     }

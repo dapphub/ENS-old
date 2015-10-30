@@ -8,10 +8,10 @@ contract ENSTester is ENSUser {
     {
         init_usermock(app);
     }
-    function do_set( uint node, bytes key, bytes32 value ) returns (bool ok) {
+    function do_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         return ens.node_set( node, key, value );
     }
-    function do_get( uint node, bytes key ) returns (bytes32 value, bool is_node, bool ok) {
+    function do_get( uint node, bytes32 key ) returns (bytes32 value, bool is_node, bool ok) {
         return ens.node_get( node, key );
     }
 }
@@ -19,13 +19,15 @@ contract ENSTester is ENSUser {
 contract ENSTest is Test {
     ENS ens;
     ENS_Controller_CuratedNamereg root;
-    StandardRegistryController std;
+    StandardRegistryController[10] _conts;
     uint root_id;
     ENSTester A;
     function setUp() {
         root = new ENS_Controller_CuratedNamereg();
         ens = new ENS( root );
-        std = new StandardRegistryController( ens );
+        for( var i = 0; i < _conts.length; i++ ) {
+            _conts[i] = new StandardRegistryController( ens );
+        }
         A = new ENSTester( ens );
         root_id = root.ens_controller_init( ens, A );
         root.init_usermock(ens);

@@ -14,10 +14,10 @@ contract StandardRegistryController is ENSController
         address owner;
         bool    claimed;
     }
-    mapping( uint => mapping( bytes => RegistryEntry ) ) entries;
+    mapping( uint => mapping( bytes32 => RegistryEntry ) ) entries;
 
 
-    function _set( uint node, address caller, bytes key
+    function _set( uint node, address caller, bytes32 key
                  , bytes32 new_value, address new_owner, bool new_claimed )
              internal
              returns (bool ok)
@@ -31,7 +31,7 @@ contract StandardRegistryController is ENSController
         entry.owner = new_owner;
         return true;
     }
-    function _get( uint node, bytes key )
+    function _get( uint node, bytes32 key )
              internal
              returns (bytes32 value, bool is_link, bool ok )
     {
@@ -40,28 +40,28 @@ contract StandardRegistryController is ENSController
     function new_registry() returns ( uint node ) {
         return ens.new_node();
     }
-    function set( uint node, bytes key, bytes32 value ) {
+    function set( uint node, bytes32 key, bytes32 value ) {
         _set( node, msg.sender, key, value, msg.sender, true );
     }
-    function transfer( uint node, bytes key, address new_owner ) {
+    function transfer( uint node, bytes32 key, address new_owner ) {
         var entry = entries[node][key];
         _set( node, msg.sender, key, entry.value, new_owner, true );
     }
-    function unregister( uint node, bytes key ) {
+    function unregister( uint node, bytes32 key ) {
         _set( node, msg.sender, key, bytes32(0), address(0), false );
     }
-    function ens_set( uint node, address caller, bytes key, bytes32 value, bool is_link )
+    function ens_set( uint node, address caller, bytes32 key, bytes32 value, bool is_link )
              ens_only()
              returns (bool ok)
     {
         _set(node, caller, key, value, caller, true );
     }
-    function ens_get( uint node, address caller, bytes key )
+    function ens_get( uint node, address caller, bytes32 key )
              returns (bytes32 value, bool is_link, bool ok)
     {
         return _get( node, key );
     }
-    function ens_link( uint node, address caller, bytes key, uint subnode )
+    function ens_link( uint node, address caller, bytes32 key, uint subnode )
              returns (bytes32 value, bool is_link, bool ok)
     {
         return _get( node, key );

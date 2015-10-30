@@ -10,14 +10,14 @@ contract ENS_Controller_CuratedNamereg is ENSController
         bool is_link;
     }
 
-    mapping( bytes => bytes32 ) values;
+    mapping( bytes32 => bytes32 ) values;
 
     function ens_controller_init( ENS app, address _curator ) returns (uint) {
         init_usermock( app );
         curator = _curator;
         return ens.new_node();
     }
-    function ens_set( uint node, address caller, bytes key, bytes32 value, bool is_link)
+    function ens_set( uint node, address caller, bytes32 key, bytes32 value, bool is_link)
              ens_only()
              returns (bool)
     {
@@ -27,7 +27,7 @@ contract ENS_Controller_CuratedNamereg is ENSController
         }
         return false;
     }
-    function ens_get( uint node, address caller, bytes key) returns (bytes32 value, bool is_link, bool ok) {
+    function ens_get( uint node, address caller, bytes32 key) returns (bytes32 value, bool is_link, bool ok) {
         return (values[key], false, true);
     }
 }
