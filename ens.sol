@@ -1,5 +1,5 @@
 import 'interface.sol';
-import 'core/debug.sol';
+import 'dapple/debug.sol';
 
 
 contract ENS is ENSApp

@@ -1,4 +1,4 @@
-import 'core/test.sol';
+import 'dapple/test.sol';
 import 'ens.sol';
 import 'controllers/curated_root.sol';
 import 'controllers/standard_registry.sol';

@@ -7,7 +7,7 @@ version: '0.0.1a'
 # versions this package needs.
 #
 dependencies:
-    core: 'latest'
+    dapple: 'latest'
 
 # All paths in the dappfile and in your local Solidity
 # imports are interpreted relative to this directory.
@@ -15,12 +15,12 @@ dependencies:
 # The line below would make it relative to the
 # "contracts" directory in the project's root.
 #
-#source_dir: 'contracts'
+# source_dir: 'contracts'
 
 # A list of files to ignore, relative to "source_dir."
 #
-#ignore:
-#    - controllers/standard_registry.sol
+# ignore:
+#     - ignored_file.sol
 
 # A map of preprocessor variable names to values to
 # pass on to your preprocessor. For example, the
