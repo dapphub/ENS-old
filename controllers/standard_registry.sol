@@ -11,61 +11,62 @@ contract StandardRegistryController is ENSController
     }
     struct RegistryEntry {
         bytes32 value;
+	bool    link;
         address owner;
         bool    claimed;
     }
     mapping( uint => mapping( bytes32 => RegistryEntry ) ) entries;
 
-
-    function _set( uint node, address caller, bytes32 key
-                 , bytes32 new_value, address new_owner, bool new_claimed )
-             internal
-             returns (bool ok)
-    {
-        var entry = entries[node][key];
-        if( entry.claimed && entry.owner != caller) {
-            return false;
-        }
-        entry.claimed = new_claimed;
-        entry.value = new_value;
-        entry.owner = new_owner;
-        return true;
-    }
-    function _get( uint node, bytes32 key )
-             internal
-             returns (bytes32 value, bool is_link, bool ok )
-    {
-        return (entries[node][key].value, false, true);
-    }
     function new_registry() returns ( uint node ) {
         return ens.new_node();
     }
-    function set( uint node, bytes32 key, bytes32 value ) {
-        _set( node, msg.sender, key, value, msg.sender, true );
+    function set( uint node, bytes32 key, bytes32 value ) returns (bool) {
+	var entry = entries[node][key];
+	if( entry.owner == msg.sender || !entry.claimed) {
+		entry.value = value;
+		entries[node][key] = entry;
+		return true;
+	}
+	return false;
     }
-    function transfer( uint node, bytes32 key, address new_owner ) {
+    function get( uint node, bytes32 key ) returns (bytes32 value, bool ok) {
+	var entry = entries[node][key];
+	if( entry.claimed ) {
+		return (entry.value, true);
+	} else {
+		return (0x0, false);
+	}
+    }
+    function transfer( uint node, bytes32 key, address new_owner ) returns (bool success) {
         var entry = entries[node][key];
-        _set( node, msg.sender, key, entry.value, new_owner, true );
-    }
-    function unregister( uint node, bytes32 key ) {
-        _set( node, msg.sender, key, bytes32(0), address(0), false );
+	if( entry.owner == msg.sender ) {
+		entry.owner = new_owner;
+		entries[node][key] = entry;
+		return true;
+	}
+	return false;
     }
     function ens_set( uint node, address caller, bytes32 key, bytes32 value, bool is_link )
-             ens_only()
              returns (bool ok)
     {
-        _set(node, caller, key, value, caller, true );
+	var entry = entries[node][key];
+	var sender = msg.sender;
+	if (msg.sender == address(ens)) {
+		sender = caller;
+	}
+	if( sender == entry.owner || !entry.claimed ) {
+		entry.claimed = true;
+		entry.value = value;
+		entry.link = is_link;
+		entry.owner = sender;
+		return true;
+	}
+	return false;
     }
     function ens_get( uint node, address caller, bytes32 key )
              returns (bytes32 value, bool is_link, bool ok)
     {
-        return _get( node, key );
+	var entry = entries[node][key];
+	return (entry.value, entry.link, true);
     }
-    function ens_link( uint node, address caller, bytes32 key, uint subnode )
-             returns (bytes32 value, bool is_link, bool ok)
-    {
-        return _get( node, key );
-    }
-
-
 }

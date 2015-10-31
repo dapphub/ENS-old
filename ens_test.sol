@@ -3,17 +3,24 @@ import 'ens.sol';
 import 'controllers/curated_root.sol';
 import 'controllers/standard_registry.sol';
 
-contract ENSTester is ENSUser {
-    function ENSTester( ENS app )
+contract ENSTester {
+    ENS ens;
+	StandardRegistryController std;
+    function ENSTester( ENS app, StandardRegistryController _std )
     {
-        init_usermock(app);
+	ens = app;
+	std = _std;
     }
-    function do_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
+    function do_node_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         return ens.node_set( node, key, value );
     }
-    function do_get( uint node, bytes32 key ) returns (bytes32 value, bool is_node, bool ok) {
+    function do_node_get( uint node, bytes32 key ) returns (bytes32 value, bool is_node, bool ok) {
         return ens.node_get( node, key );
     }
+	function do_new_registry() returns (uint node) {
+		return std.new_registry();
+	}
+
 }
 
 contract ENSTest is Test {
@@ -29,27 +36,38 @@ contract ENSTest is Test {
         A = new ENSTester( ens );
         root_id = root.ens_controller_init( ens, A );
         root.init_usermock(ens);
-        A.do_set(root_id, "key", "value");
-
+        A.do_node_set(root_id, "key", "value");
     }
     function testRootNodeConfigured() {
         assertEq( root, address(ens.root()), "wrong root controller");
         assertEq( A, root.curator(), "wrong root controller owner" );
     }
+    
     function testRootNodeController() {
         var (val, _,  ok) = root.ens_get(root_id, me, "key");
         assertEq32("value", val, "controller gets wrong key");
         (val, _, ok) = ens.node_get(root_id, "key");
         assertEq32("value", val, "app gets wrong key");
 
-        assertTrue( A.do_set(root_id, "key", "value2"), "can't re-set key" );
+        assertTrue( A.do_node_set(root_id, "key", "value2"), "can't re-set key" );
         (val, _, ok) = ens.node_get(root_id, "key");
         assertEq32( "value2", val, "wrong value after set" );
     }
     function testResolve() {
-        var (ret, _, ok) = ens.node_get( root_id, "axsdfasdfasdfasdsdfasdf");
-        assertEq32( ret, 0x0 );
+        var (ret, is_link, ok) = ens.get("key");
+	assertTrue(ok);
+        assertEq32( ret, "value" );
+        (ret, is_link, ok) = ens.get("/key");
+	assertTrue(ok);
+        assertEq32( ret, "value" );
     }
+/*
+    function testNestedResolve() {
+        var (ret, is_link, ok) = ens.get("key/subkey");
+	assertTrue(ok);
+        assertEq32( ret, "value" );
+    }
+*/
     function testCuratedNameregGet()
              logs_gas()
     {
@@ -60,4 +78,6 @@ contract ENSTest is Test {
     {
         ens.node_set(root_id, "key", "value");
     }
+	
+	// test delimiter as first string char
 }
