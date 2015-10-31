@@ -1,5 +1,6 @@
 import 'interface.sol';
 import 'dapple/debug.sol';
+import 'controllers/standard_registry.sol';
 
 
 contract ENS is ENSApp
@@ -9,9 +10,12 @@ contract ENS is ENSApp
     ENSController public root;
     mapping( uint => ENSController ) _controllers;
 
+    StandardRegistryController public std;
+
     function ENS( ENSController root_controller )  {
         next_id = 1;
         root = root_controller;
+        std = new StandardRegistryController( this );
     }
 
     function new_node() returns (uint) { return claim_node(); }
