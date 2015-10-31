@@ -59,44 +59,46 @@ contract ENS is ENSApp
     function resolve_path( bytes query ) 
              constant
              internal
-             returns (uint ret_node, bytes32 key, bytes32 value, bool is_link, bool ok)
+             returns (uint node, bytes32 key, bytes32 value, bool is_link, bool ok)
     {
-        return (1, 0x0, 0x0, false, false);
-/*
-        uint node = 1; // root node ID
-        uint offset = 0;
-        uint i;
-        bool is_link;
-        while(true) {
-            bytes32 partial;
-            for( i = 0; offset+i < query.length; i++ ) {
-                bool is_node = false;
-                byte c = query[offset + i];
-                if( is_separator(c) ) {
-                    if( i == 0 ) {
-                        continue;
-                    }
-                    var controller = _controllers[node];
-                    (value, is_link, ok) = controller.ens_get(node, msg.sender, partial);
-                    if( !ok ) {
-                        return (0x0, false);
-                    }
-                    if( is_link ) {
-                        offset = offset+i+1;
-                        break;
-                    } else {
-                        return (value, true);
-                    }
-                } else {
-                    partial.push(query[offset + i]);
-                }
-            }
-            if( i == query.length-1 ) {
-                return (value, true);
-            }
-        }
-*/
+	uint current_node = 1;
+	uint path_position = 0;
+	while( true ) {
+		bytes32 partial_key = 0x0;	
+		uint shift = uint(256)**31;
+		bool escaped = false;
+		if( is_separator( query[path_position] ) ) {
+			path_position++;
+		}
+		while( path_position < query.length ) {
+			byte character = query[path_position];
+			path_position++;
+			if( is_separator(character) ) {
+				break;
+			}
+			if( is_escape(character) ) {
+				path_position++;
+				continue;
+			}
+			partial_key = partial_key | bytes32((uint(character) * shift));
+			shift /= 256;
+			log_bytes32(partial_key);
+		}
+		var controller = _controllers[current_node];
+		(value, is_link, ok) = controller.ens_get( current_node, msg.sender, partial_key );
+		return;
+	}
+		// parse key
+		// get from node
+		// if not ok:
+		// 	fail
+		// if not link:
+		//     return node, key, value, false, true
+		// else:
+		//    node = value
+		//    recurse
     }
+
     function is_separator(byte c) internal returns (bool) {
         return c == byte("/");
     }
