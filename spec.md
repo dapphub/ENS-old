@@ -4,14 +4,14 @@ ENS specification v0.1
 TOC
 ---
 
-1) App ABI
-2) Controller ABI
-3) App behavior
-4) Resolving ERLs
-5) User Mixin
-6) Deploy sequence ("default" namespaces)
-7) Example Controller Types
-8) Notes and Ideas
+1. App ABI
+2. Controller ABI
+3. App behavior
+4. Resolving ERLs
+5, User Mixin
+6. Deploy sequence ("default" namespaces)
+7. Example Controller Types
+8. Notes and Ideas
 
 
 App ABI
