@@ -15,6 +15,8 @@ contract ENS is ENSApp
     function ENS( ENSController root_controller )  {
         next_id = 1;
         root = root_controller;
+        // TODO there is no reason for this to live here.
+        // It should go in ExtendedImpl.
         std = new StandardRegistryController( this );
     }
 

@@ -3,7 +3,7 @@ import 'dapple/debug.sol';
 // TODO replace mock with proper mixin by removing init_usermock and using CONSTANT macro
 contract ENSUser is Debug {
     ENS ens;
-    function init_usermock( ENS app ) {
+    function init_ens_usermock( ENS app ) {
         ens = app;
     }
     modifier ens_caller( address who ) {
