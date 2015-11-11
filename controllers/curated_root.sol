@@ -5,6 +5,7 @@ contract ENS_Controller_CuratedNamereg is ENSController
                                         , ENSUser
 {
     address public curator;
+    bool _init;
     struct ENSEntry {
         bytes32 value;
         bool is_link;
@@ -13,9 +14,13 @@ contract ENS_Controller_CuratedNamereg is ENSController
     mapping( bytes32 => bytes32 ) values;
 
     function ens_controller_init( ENS app, address _curator ) returns (uint) {
-        init_usermock( app );
-        curator = _curator;
-        return ens.new_node();
+        if( !_init) {
+            init_usermock( app );
+            curator = _curator;
+            _init = true;
+            return ens.new_node();
+        }
+        return 0;
     }
     function ens_set( uint node, address caller, bytes32 key, bytes32 value, bool is_link)
              ens_only()
