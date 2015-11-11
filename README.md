@@ -9,4 +9,4 @@ The root registry `/` is controlled by "curators", a token-based voting scheme w
 
 
 
-*The proposed specification is in `spec.md`.*
+**The proposed specification is in `spec.md`.**
