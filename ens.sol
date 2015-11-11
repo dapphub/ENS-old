@@ -20,6 +20,7 @@ contract ENS is ENSApp
         std = new StandardRegistryController( this );
     }
 
+    // new_node is the old name, TODO remove it and fix tests
     function new_node() returns (uint) { return claim_node(); }
     function claim_node() returns (uint) {
         var ret = next_id;
