@@ -4,14 +4,14 @@ ENS
 TOC
 ---
 
-App ABI
-Controller ABI
-App behavior
-Resolving ERL
-User Mixin
-Deploy sequence ("default" namespaces)
-Example Controller Types
-Notes and Ideas
+1) App ABI
+2) Controller ABI
+3) App behavior
+4) Resolving ERLs
+5) User Mixin
+6) Deploy sequence ("default" namespaces)
+7) Example Controller Types
+8) Notes and Ideas
 
 
 App ABI
@@ -45,12 +45,13 @@ ENS will act as if the controller implements the controller interface above.
 
 
 * If ENS calls any controller function, then the `caller` argument is the sender to ENS (the sender's sender). If the sender is not ENS, this value is unreliable. Use the `ENSUser` mixin's `ens_sender_only(who)` modifier.
-* If the controller returns `true` from a call to `ens_set` from ENS, ENS will return true (from one of the `set` variants)
-
-* If ENS calls `ens_get`, and it returns `(val, true)`, ENS will returns `(val, true)` (from `get` or `query`).
-* If ENS calls `ens_get`, and it returns `(val, false)`, ENS will returns `(0x0, false)` (from `get` or `query`).
-
+* If ENS calls any controller function, then the `node` argument is the node ID for which the controller should resolve the value. If the sender is not ENS, this value is unreliable. Use the `ENSUser` mixin's `ens_sender_only(who)` modifier.
 * The function of the `node` argument is that it allows a single contract to control multiple namespaces. A controller can call `claim_node` as many times as it likes.
+* If the controller returns `true` from a call to `ens_set` from ENS, ENS will return true (from one of the `set` variants).
+
+* If ENS calls `ens_get`, and it returns `(val, link, true)`, ENS will returns `(val, link, true)` (from `get`).
+* If ENS calls `ens_get`, and it returns `(val, link, false)`, ENS will returns `(0x0, false, false)` (from `get`).
+
 
 
 ERLs
@@ -64,10 +65,10 @@ ERL query pseudocode:
         i = s.find("/")
         return (s[:i], s[i+1:], True)
 
-    def query(s, n=root):
+    def get(path):
         (key, subquery, ok) = split(s)
         if not ok:
-            return (0, False)
+            return (0, false, false)
         (val, ok) = n.get(key)
         if not ok:
             return (0, False)
