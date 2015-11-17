@@ -1,0 +1,4 @@
+site_name: ENS - Ethereal Namespace
+pages:
+- Home: index.md
+- API: api.md

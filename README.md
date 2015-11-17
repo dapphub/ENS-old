@@ -8,5 +8,11 @@ For example, `/f/` is a simple first-come first-serve proof of concept namespace
 The root registry `/` is controlled by "curators", a token-based voting scheme which allows the token holders to permanently set a value in the root registry. They are incenvitized to create good name registry mechanisms and assign TLD's wisely, because they could collect fees for popular namespaces they create and set as TLD's.
 
 
-
 **The proposed specification is in `spec.md`.**
+
+## Documentation
+
+```
+sudo pip install mkdocs
+mkdocs serve
+```
