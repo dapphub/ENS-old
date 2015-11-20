@@ -8,8 +8,8 @@ contract ENSTester {
 	StandardRegistryController std;
     function ENSTester( ENS app, StandardRegistryController _std )
     {
-	ens = app;
-	std = _std;
+        ens = app;
+        std = _std;
     }
     function do_node_set( uint node, bytes32 key, bytes32 value ) returns (bool ok) {
         return ens.node_set( node, key, value );
@@ -17,10 +17,6 @@ contract ENSTester {
     function do_node_get( uint node, bytes32 key ) returns (bytes32 value, bool is_node, bool ok) {
         return ens.node_get( node, key );
     }
-	function do_new_registry() returns (uint node) {
-		return std.new_registry();
-	}
-
 }
 
 contract ENSTest is Test {
@@ -29,15 +25,18 @@ contract ENSTest is Test {
     StandardRegistryController std;
     uint root_id;
     ENSTester A;
+
     function setUp() {
         root = new ENS_Controller_CuratedNamereg();
         ens = new ENS( root );
-        std = new StandardRegistryController( ens );
-        A = new ENSTester( ens );
+        std = new StandardRegistryController();
+        std.ens_controller_init( ens );
+        A = new ENSTester( ens, std );
         root_id = root.ens_controller_init( ens, A );
-        root.init_usermock(ens);
+        root.init_ens_usermock(ens);
         A.do_node_set(root_id, "key", "value");
     }
+
     function testRootNodeConfigured() {
         assertEq( root, address(ens.root()), "wrong root controller");
         assertEq( A, root.curator(), "wrong root controller owner" );
@@ -53,12 +52,13 @@ contract ENSTest is Test {
         (val, _, ok) = ens.node_get(root_id, "key");
         assertEq32( "value2", val, "wrong value after set" );
     }
+
     function testResolve() {
         var (ret, is_link, ok) = ens.get("key");
-	assertTrue(ok);
+	    assertTrue(ok);
         assertEq32( ret, "value" );
         (ret, is_link, ok) = ens.get("/key");
-	assertTrue(ok);
+    	assertTrue(ok);
         assertEq32( ret, "value" );
     }
 /*
@@ -73,6 +73,7 @@ contract ENSTest is Test {
     {
         ens.node_get(root_id, "key");
     }
+
     function testCuratedNameregSet()
              logs_gas()
     {
