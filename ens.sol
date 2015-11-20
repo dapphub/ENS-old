@@ -2,7 +2,6 @@ import 'interface.sol';
 import 'dapple/debug.sol';
 import 'controllers/standard_registry.sol';
 
-
 contract ENS is ENSApp
               , Debug
 {
@@ -29,8 +28,8 @@ contract ENS is ENSApp
         next_id++;
         return ret;
     }
-    function get_controller( uint node ) returns (ENSController controller, bool ok) {
-        return (_controllers[node], true);
+    function get_controller( uint node ) returns (ENSController controller) {
+        return (_controllers[node]);
     }
     function get( bytes path ) returns ( bytes32 value, bool is_link, bool ok ) {
         (, , value, is_link, ok) = resolve_path( path );

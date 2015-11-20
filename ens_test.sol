@@ -34,7 +34,8 @@ contract ENSTest is Test {
         A = new ENSTester( ens, std );
         root_id = root.ens_controller_init( ens, A );
         root.init_ens_usermock(ens);
-        A.do_node_set(root_id, "key", "value");
+        ens.node_set( root_id, "key", "value" );
+        //A.do_node_set(root_id, "key", "value");
     }
 
     function testRootNodeConfigured() {
@@ -55,7 +56,7 @@ contract ENSTest is Test {
 
     function testResolve() {
         var (ret, is_link, ok) = ens.get("key");
-	    assertTrue(ok);
+        assertTrue(ok);
         assertEq32( ret, "value" );
         (ret, is_link, ok) = ens.get("/key");
     	assertTrue(ok);
