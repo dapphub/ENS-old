@@ -15,7 +15,7 @@ contract ENS_Controller_CuratedNamereg is ENSController
 
     function ens_controller_init( ENS app, address _curator ) returns (uint) {
         if( !_init) {
-            init_usermock( app );
+            init_ens_usermock( app );
             curator = _curator;
             _init = true;
             return ens.new_node();
@@ -26,6 +26,10 @@ contract ENS_Controller_CuratedNamereg is ENSController
              ens_only()
              returns (bool)
     {
+        logs("Setting '%s' on node #%s to '%s'");
+        log_bytes32(key);
+        log_uint(node);
+        log_bytes32(value);
         if( caller == curator ) {
             values[key] = value;
             return true;
@@ -33,6 +37,9 @@ contract ENS_Controller_CuratedNamereg is ENSController
         return false;
     }
     function ens_get( uint node, address caller, bytes32 key) returns (bytes32 value, bool is_link, bool ok) {
+        logs("Getting '%s' on node #%s");
+        log_bytes32(key);
+        log_uint(node);
         return (values[key], false, true);
     }
 }

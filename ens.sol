@@ -17,7 +17,8 @@ contract ENS is ENSApp
         root = root_controller;
         // TODO there is no reason for this to live here.
         // It should go in ExtendedImpl.
-        std = new StandardRegistryController( this );
+        std = new StandardRegistryController();
+        std.ens_controller_init( this );
     }
 
     // new_node is the old name, TODO remove it and fix tests
@@ -64,33 +65,34 @@ contract ENS is ENSApp
              internal
              returns (uint node, bytes32 key, bytes32 value, bool is_link, bool ok)
     {
-	uint current_node = 1;
-	uint path_position = 0;
-	while( true ) {
-		bytes32 partial_key = 0x0;	
-		uint shift = uint(256)**31;
-		bool escaped = false;
-		if( is_separator( query[path_position] ) ) {
-			path_position++;
-		}
-		while( path_position < query.length ) {
-			byte character = query[path_position];
-			path_position++;
-			if( is_separator(character) ) {
-				break;
-			}
-			if( is_escape(character) ) {
-				path_position++;
-				continue;
-			}
-			partial_key = partial_key | bytes32((uint(character) * shift));
-			shift /= 256;
-			log_bytes32(partial_key);
-		}
-		var controller = _controllers[current_node];
-		(value, is_link, ok) = controller.ens_get( current_node, msg.sender, partial_key );
-		return;
-	}
+        uint current_node = 1;
+        uint path_position = 0;
+        while( true ) {
+            bytes32 partial_key = 0x0;	
+            uint shift = uint(256)**31;
+            bool escaped = false;
+            if( is_separator( query[path_position] ) ) {
+                path_position++;
+            }
+            while( path_position < query.length ) {
+                byte character = query[path_position];
+                path_position++;
+                if( is_separator(character) ) {
+                    break;
+                }
+                if( is_escape(character) ) {
+                    path_position++;
+                    continue;
+                }
+                partial_key = partial_key | bytes32((uint(character) * shift));
+                shift /= 256;
+            }
+            var controller = _controllers[current_node];
+            log_bytes32(key);
+            log_uint(current_node);
+            (value, is_link, ok) = controller.ens_get( current_node, msg.sender, partial_key );
+            return;
+        }
 		// parse key
 		// get from node
 		// if not ok:
