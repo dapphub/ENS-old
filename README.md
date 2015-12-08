@@ -1,9 +1,6 @@
-##### Join us on SLACK
-------
-[![Slack Status](http://slack.makerdao.com/badge.svg)](https://slack.makerdao.com)
-
 ENS
 ===
+[![Slack Status](http://slack.makerdao.com/badge.svg)](https://slack.makerdao.com)
 
 ENS is a contract system and set of conventions for unifying all simple (word-sized keys/values) registries into a single hierarchal namespace. It resembles a filesystem of `bytes32` values, with user-specified permissions/behavior at each directory.
 
